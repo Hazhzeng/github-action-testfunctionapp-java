@@ -7,16 +7,16 @@ on:
   push:
     branches:
       - master
+  workflow_dispatch:
 
 env:
   AZURE_FUNCTIONAPP_NAME: hazeng-fa-dc-java8-con # set this to your function app name on Azure
-  POM_XML_DIRECTORY: '.' # set this to the directory which contains pom.xml file
-  POM_FUNCTIONAPP_NAME: hazeng-fa-dc-java8-con # set this to the function app name in your local development environment
+  PACKAGE_DIRECTORY: '.' # set this to the directory which contains pom.xml file
   JAVA_VERSION: '8' # set this to the java version to use
 
 jobs:
   build-and-deploy:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@master
@@ -29,7 +29,7 @@ jobs:
     - name: 'Restore Project Dependencies Using Mvn'
       shell: pwsh
       run: |
-        pushd './${{ env.POM_XML_DIRECTORY }}'
+        pushd './${{ env.PACKAGE_DIRECTORY }}'
         mvn clean package
         popd
     - name: 'Run Azure Functions Action'
@@ -38,5 +38,6 @@ jobs:
       with:
         app-name: 'hazeng-fa-dc-java8-con'
         slot-name: 'production'
-        package: './${{ env.POM_XML_DIRECTORY }}/target/azure-functions/${{ env.POM_FUNCTIONAPP_NAME }}'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_845044c8f2114952a84d23ebab173d6d }}
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_4cda74673f6a42c8bb9d3830f8bffaa8 }}
+        package: '${{ env.PACKAGE_DIRECTORY }}'
+        respect-pom-xml: true
